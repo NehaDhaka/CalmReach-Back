@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "knex": "^2.4.2",
+    "moment": "^2.29.4",
+    "mysql2": "^3.3.5",
+    "socket.io": "^4.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "name": "calmreach-back",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "Neha Dhaka",
+  "license": "ISC",
+  "description": ""
+}
