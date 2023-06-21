@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
 const Joi = require("joi");
 
-const register = asyncHandler(async (req, res, next) => {
+const register = asyncHandler(async (req, res) => {
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
@@ -57,7 +57,7 @@ const register = asyncHandler(async (req, res, next) => {
         _id: createdUser.id,
         name: createdUser.name,
         email: createdUser.email,
-        token: generateToken(createdUser.id),
+        token: generateToken(createdUser.id, createdUser.user_role),
       };
 
       res.status(201).json({ userData });
@@ -67,7 +67,7 @@ const register = asyncHandler(async (req, res, next) => {
     });
 });
 
-const login = asyncHandler(async (req, res, next) => {
+const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   const existingUser = await knex("user")
     .select()
@@ -79,15 +79,18 @@ const login = asyncHandler(async (req, res, next) => {
       _id: existingUser.id,
       name: existingUser.name,
       email: existingUser.email,
-      token: generateToken(existingUser.id),
+      token: generateToken(existingUser.id, existingUser.user_role),
     });
   } else {
-    res.status(400).json({ message: "Invalid credentials" });
+    return res.json({
+      message: "Invalid Credentials.",
+      status: false,
+    });
   }
 });
 
-const getMe = asyncHandler(async (req, res, next) => {
-  const { id, name, email } = await knex("user")
+const user = asyncHandler(async (req, res) => {
+  const { id, name, email, user_role, tag } = await knex("user")
     .select()
     .where("id", req.user.id)
     .first();
@@ -95,11 +98,35 @@ const getMe = asyncHandler(async (req, res, next) => {
     id,
     name,
     email,
+    user_role,
+    tag,
   });
 });
 
-const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+const volunteers = asyncHandler(async (req, res) => {
+  const userTag = await knex("user")
+    .select("tag")
+    .where("id", req.user.id)
+    .first();
+
+  const volunteerList = await knex("user")
+    .select("id", "name", "tag")
+    .where("user_role", "volunteer")
+    .andWhere("tag", userTag.tag);
+
+  res.json(volunteerList);
+});
+
+const allVolunteers = asyncHandler(async (req, res) => {
+  const volunteerList = await knex("user")
+    .select("id", "name")
+    .where("user_role", "volunteer");
+
+  res.json(volunteerList);
+});
+
+const generateToken = (id, userRole) => {
+  return jwt.sign({ id, userRole }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
 };
@@ -107,5 +134,7 @@ const generateToken = (id) => {
 module.exports = {
   register,
   login,
-  getMe,
+  user,
+  volunteers,
+  allVolunteers,
 };
