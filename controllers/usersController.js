@@ -118,9 +118,7 @@ const volunteers = asyncHandler(async (req, res) => {
 });
 
 const allVolunteers = asyncHandler(async (req, res) => {
-  const volunteerList = await knex("user")
-    .select("id", "name")
-    .where("user_role", "volunteer");
+  const volunteerList = await knex("user").select("id", "name");
 
   res.json(volunteerList);
 });
