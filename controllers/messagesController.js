@@ -26,7 +26,6 @@ const getAllMessage = asyncHandler(async (req, res) => {
     .orderBy("updated_at", "asc");
 
   const projectedMessages = messages.map((msg) => {
-    console.log(msg);
     return {
       fromSelf: msg.sender_id === from,
       message: msg.message_text,
