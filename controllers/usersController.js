@@ -117,7 +117,7 @@ const volunteers = asyncHandler(async (req, res) => {
   res.json(volunteerList);
 });
 
-const allVolunteers = asyncHandler(async (req, res) => {
+const contacts = asyncHandler(async (req, res) => {
   const volunteerList = await knex("user").select("id", "name");
 
   res.json(volunteerList);
@@ -134,5 +134,5 @@ module.exports = {
   login,
   user,
   volunteers,
-  allVolunteers,
+  contacts,
 };

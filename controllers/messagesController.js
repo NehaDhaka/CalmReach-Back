@@ -1,8 +1,5 @@
-const jwt = require("jsonwebtoken");
 const knex = require("knex")(require("../knexfile"));
-const bcrypt = require("bcryptjs");
 const asyncHandler = require("express-async-handler");
-const Joi = require("joi");
 
 const addMessage = asyncHandler(async (req, res) => {
   const { from, to, message } = req.body;
